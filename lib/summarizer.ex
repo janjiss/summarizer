@@ -44,20 +44,12 @@ defmodule Summarizer do
 
   defp reduce_activity_group_to_summary(activity_groups) do
     Enum.map(activity_groups, fn(activity_group) ->
-      Enum.map(activity_group.group, fn(activity) -> 
+      Enum.reduce(activity_group.group, Summary.new, fn(activity, acc)-> 
         Summary[
-          total_distance: activity.distance,
-          total_duration: activity.duration, 
-          calories_burned: activity.calories,
+          total_distance: acc.total_distance + activity.distance,
+          total_duration: acc.total_duration + activity.duration, 
+          calories_burned: acc.calories_burned + activity.calories, 
           date: activity.captured_at
-          ]
-      end) |>
-      Enum.reduce(fn(activity, acc)-> 
-        Summary[
-          total_distance: acc.total_distance + activity.total_distance,
-          total_duration: acc.total_duration + activity.total_duration, 
-          calories_burned: acc.calories_burned + activity.calories_burned, 
-          date: activity.date
           ]
       end)
     end)
